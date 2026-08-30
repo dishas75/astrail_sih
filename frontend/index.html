@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>ASTRAIL: Orbital Conjunction Watch</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🛰️</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;700;900&family=Inter:wght@400;500;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<canvas id="starfield"></canvas>
+
+<div class="app-shell">
+
+  <!-- ============ SIDEBAR ============ -->
+  <nav class="sidebar" id="sidebar">
+    <div class="side-brand">
+      <span class="side-mark">◈</span>
+      <div class="side-brand-text">
+        <span class="side-name">ASTRAIL</span>
+        <span class="side-tag">Conjunction Watch</span>
+      </div>
+    </div>
+
+    <div class="side-nav">
+      <button class="nav-item active" data-page="overview">
+        <svg viewBox="0 0 24 24" class="nav-icon"><circle cx="12" cy="12" r="3.2"/><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="1.4"/><line x1="12" y1="1.2" x2="12" y2="4.4" stroke="currentColor" stroke-width="1.4"/></svg>
+        <span>Overview</span>
+      </button>
+      <button class="nav-item" data-page="live">
+        <svg viewBox="0 0 24 24" class="nav-icon"><circle cx="12" cy="12" r="8.5" fill="none" stroke="currentColor" stroke-width="1.4"/><ellipse cx="12" cy="12" rx="8.5" ry="3.2" fill="none" stroke="currentColor" stroke-width="1.2"/><ellipse cx="12" cy="12" rx="3.2" ry="8.5" fill="none" stroke="currentColor" stroke-width="1.2"/></svg>
+        <span>Live Tracking</span>
+      </button>
+      <button class="nav-item" data-page="analytics">
+        <svg viewBox="0 0 24 24" class="nav-icon"><path d="M4 20V10M11 20V4M18 20v-7" stroke="currentColor" stroke-width="1.8" fill="none" stroke-linecap="round"/></svg>
+        <span>Analytics</span>
+      </button>
+      <button class="nav-item" data-page="methodology">
+        <svg viewBox="0 0 24 24" class="nav-icon"><path d="M6 3h9l4 4v14H6z" fill="none" stroke="currentColor" stroke-width="1.4"/><path d="M9 10h7M9 14h7M9 18h4" stroke="currentColor" stroke-width="1.2"/></svg>
+        <span>Methodology</span>
+      </button>
+    </div>
+
+    <div class="side-footer">
+      <div class="side-status">
+        <span class="dot" id="sideDot"></span>
+        <span id="sideSourceLabel">CONNECTING…</span>
+      </div>
+      <div class="side-clock"><span id="utcClock">--:--:--</span> UTC</div>
+    </div>
+  </nav>
+
+  <!-- ============ MAIN ============ -->
+  <div class="main-area">
+
+    <header class="statusbar">
+      <div class="statusbar-title" id="pageTitle">Overview</div>
+      <div class="statusbar-right">
+        <div class="mini-stat"><span id="objectCountVal">0</span><label>objects</label></div>
+        <div class="mini-stat"><span id="alertCountVal">0</span><label>alerts</label></div>
+        <div class="mini-kessler" id="miniKessler">
+          <span class="mini-kessler-dot"></span>
+          <span id="miniKesslerVal">0.0</span>
+          <label>kessler</label>
+        </div>
+      </div>
+    </header>
+
+    <!-- ======== PAGE: OVERVIEW ======== -->
+    <section class="page active" id="page-overview">
+      <div class="hero">
+        <div class="hero-copy">
+          <span class="eyebrow">Space Debris Tracking</span>
+          <h1>Watch every close approach in low Earth orbit,<br> before it becomes a headline.</h1>
+          <p>ASTRAIL pulls public TLE data, propagates every tracked object with SGP4, and flags conjunctions
+             before they happen with a single number that tells you how bad the neighborhood looks right now.</p>
+          <div class="hero-actions">
+            <button class="btn-primary" data-goto="live">▸ Open Live Tracking</button>
+            <button class="btn-ghost" data-goto="methodology">How it works</button>
+          </div>
+        </div>
+        <div class="hero-visual">
+          <svg viewBox="0 0 260 260" class="pulse-svg">
+            <circle cx="130" cy="130" r="40" class="pulse-ring"/>
+            <circle cx="130" cy="130" r="76" class="pulse-ring"/>
+            <circle cx="130" cy="130" r="112" class="pulse-ring"/>
+            <circle cx="130" cy="130" r="4" class="pulse-core"/>
+            <g class="sweep-group">
+              <path d="M130,130 L130,18 A112,112 0 0,1 202,54 Z" class="sweep-wedge"/>
+            </g>
+            <circle cx="130" cy="54" r="3.4" class="pulse-object" id="pObj1"/>
+            <circle cx="206" cy="130" r="3.4" class="pulse-object" id="pObj2"/>
+            <circle cx="88" cy="200" r="3.4" class="pulse-object" id="pObj3"/>
+          </svg>
+        </div>
+      </div>
+
+      <div class="kpi-row">
+        <div class="kpi-card">
+          <label>Objects Tracked</label>
+          <span class="kpi-value" id="kpiObjects">—</span>
+          <span class="kpi-sub" id="kpiSource">awaiting scan</span>
+        </div>
+        <div class="kpi-card">
+          <label>Active Alerts</label>
+          <span class="kpi-value" id="kpiAlerts">—</span>
+          <span class="kpi-sub" id="kpiAlertsSub">within threshold</span>
+        </div>
+        <div class="kpi-card">
+          <label>Kessler Index</label>
+          <span class="kpi-value" id="kpiKessler">—</span>
+          <span class="kpi-sub" id="kpiKesslerLabel">nominal</span>
+        </div>
+        <div class="kpi-card kpi-countdown">
+          <label>Next Closest Approach</label>
+          <span class="kpi-value mono" id="kpiCountdown">—:—:—</span>
+          <span class="kpi-sub" id="kpiCountdownSub">no active conjunctions</span>
+        </div>
+      </div>
+
+      <div class="overview-grid">
+        <div class="card risk-breakdown-card">
+          <h2>Risk Breakdown</h2>
+          <div class="risk-stack" id="riskStack"></div>
+          <div class="risk-legend" id="riskLegend"></div>
+        </div>
+
+        <div class="card preview-alerts-card">
+          <h2>Latest Alerts <span class="see-all" data-goto="live">Open Live Tracking →</span></h2>
+          <div id="previewAlerts" class="preview-alerts"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ======== PAGE: LIVE TRACKING ======== -->
+    <section class="page" id="page-live">
+      <div class="live-layout">
+
+        <aside class="panel panel-left">
+          <div class="card">
+            <h2>Mission Parameters</h2>
+            <label class="field">
+              <span>Object Sets</span>
+              <select id="groupSelect" multiple size="4">
+                <option value="stations" selected>Space Stations</option>
+                <option value="cosmos-1408-debris" selected>Cosmos 1408 Debris</option>
+                <option value="iridium-33-debris" selected>Iridium 33 Debris</option>
+                <option value="cosmos-2251-debris" selected>Cosmos 2251 Debris</option>
+                <option value="last-30-days">Recently Launched</option>
+                <option value="active">Active Satellites (sampled)</option>
+              </select>
+            </label>
+            <label class="field">
+              <span>Look-ahead Window: <b id="hoursVal">48h</b></span>
+              <input type="range" id="hoursSlider" min="2" max="168" value="48" step="2">
+            </label>
+            <label class="field">
+              <span>Alert Threshold: <b id="threshVal">25 km</b></span>
+              <input type="range" id="threshSlider" min="1" max="100" value="25" step="1">
+            </label>
+            <label class="field toggle-field">
+              <span>Demo Mode <em>(offline synthetic catalog)</em></span>
+              <input type="checkbox" id="demoToggle">
+            </label>
+            <button id="refreshBtn" class="btn-primary full">▸ RUN CONJUNCTION SCAN</button>
+            <button id="exportBtn" class="btn-ghost full">⬇ Export Report (CSV)</button>
+          </div>
+
+          <div class="card log-card">
+            <h2>Mission Log</h2>
+            <div id="missionLog" class="mission-log"></div>
+          </div>
+        </aside>
+
+        <section class="panel panel-center">
+          <div class="card kessler-card">
+            <div class="kessler-gauge">
+              <svg viewBox="0 0 200 120" id="kesslerSvg">
+                <path d="M10,110 A90,90 0 0,1 190,110" class="gauge-track"/>
+                <path d="M10,110 A90,90 0 0,1 190,110" class="gauge-fill" id="gaugeFill"/>
+                <text x="100" y="90" class="gauge-value" id="kesslerValue">0.0</text>
+                <text x="100" y="108" class="gauge-label" id="kesslerLabel">NOMINAL</text>
+              </svg>
+            </div>
+            <div class="kessler-meta">
+              <h2>Kessler Index</h2>
+              <p>Catalog-wide collision risk, aggregated across all detected conjunctions in the current window.</p>
+              <div class="kessler-counts">
+                <span class="pill critical" id="criticalCount">0 CRITICAL</span>
+                <span class="pill high" id="highCount">0 HIGH</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="card viewer-card">
+            <div class="viewer-tabs">
+              <button class="tab active" data-view="3d">3D ORBITAL VIEW</button>
+              <button class="tab" data-view="radar">RISK RADAR</button>
+            </div>
+            <div id="viewer3d" class="viewer"></div>
+            <canvas id="viewerRadar" class="viewer" style="display:none;"></canvas>
+            <div class="viewer-hint" id="viewerHint">Drag to orbit · scroll to zoom · click a marker to inspect</div>
+          </div>
+
+          <div class="card timeline-card">
+            <h2>Upcoming Close Approaches — Next <span id="timelineHours">48</span>h</h2>
+            <div id="timeline" class="timeline"></div>
+          </div>
+        </section>
+
+        <aside class="panel panel-right">
+          <div class="card alerts-card">
+            <h2>Conjunction Alerts <span id="alertCountBadge" class="badge">0</span></h2>
+            <div id="alertsList" class="alerts-list"></div>
+          </div>
+          <div class="card inspector-card">
+            <h2>Object Inspector</h2>
+            <div id="inspector" class="inspector-empty">Select an alert or marker to inspect object details.</div>
+          </div>
+        </aside>
+
+      </div>
+    </section>
+
+    <!-- ======== PAGE: ANALYTICS ======== -->
+    <section class="page" id="page-analytics">
+      <div class="analytics-grid">
+        <div class="card">
+          <h2>Risk Level Distribution</h2>
+          <canvas id="donutChart" class="chart-canvas" height="220"></canvas>
+        </div>
+        <div class="card">
+          <h2>Miss Distance Distribution</h2>
+          <canvas id="histChart" class="chart-canvas" height="220"></canvas>
+        </div>
+        <div class="card">
+          <h2>Catalog Composition</h2>
+          <canvas id="compChart" class="chart-canvas" height="220"></canvas>
+        </div>
+        <div class="card">
+          <h2>Kessler Index — Session History</h2>
+          <canvas id="trendChart" class="chart-canvas" height="220"></canvas>
+          <p class="chart-note">Tracks the Kessler Index across scans run during this session. Run a new scan to add a point.</p>
+        </div>
+        <div class="card wide">
+          <h2>Top Objects by Conjunction Involvement</h2>
+          <div id="leaderboard" class="leaderboard"></div>
+        </div>
+        <div class="card wide">
+          <h2>Risk Driver Insight</h2>
+          <p id="insightText" class="insight-text">Run a conjunction scan to generate an insight.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ======== PAGE: METHODOLOGY ======== -->
+    <section class="page" id="page-methodology">
+      <div class="method-doc">
+        <h1>Methodology</h1>
+        <p class="method-lede">How ASTRAIL turns public orbital element sets into a risk-ranked alert feed.</p>
+
+        <h2>01 · Data ingestion</h2>
+        <p>ASTRAIL pulls Two-Line Element (TLE) sets from <a href="https://celestrak.org" target="_blank" rel="noopener">CelesTrak</a>,
+           a free, public, no-signup catalog of tracked orbital objects. Responses are cached on disk for 30 minutes.
+           If CelesTrak is unreachable, ASTRAIL falls back to the last good cache, then to a fully offline,
+           checksum-valid synthetic catalog ("Demo Mode") so the dashboard is never blank.</p>
+
+        <h2>02 · Propagation</h2>
+        <p>Every object is propagated with SGP4 — the standard model CelesTrak's own elements are designed for —
+           producing position and velocity in the TEME frame at any requested instant. Because both objects in a
+           pair are evaluated in the same frame at the same instant, relative distance is frame-independent, so no
+           extra coordinate conversion is needed for conjunction screening.</p>
+
+        <h2>03 · Conjunction search</h2>
+        <p>Every object pair is scanned in two passes: a coarse scan (5-minute steps) across the full look-ahead
+           window locates candidate local minima in separation distance, then a fine scan (10-second steps) around
+           each candidate refines the true time and distance of closest approach (TCA).</p>
+
+        <h2>04 · Risk scoring</h2>
+        <p>Each event gets a 0–100 score blending three weighted components:</p>
+        <ul>
+          <li><b>Proximity (62%)</b> — closer miss distance relative to your alert threshold.</li>
+          <li><b>Kinetic severity (28%)</b> — higher relative velocity means a more destructive impact.</li>
+          <li><b>Data confidence (10%)</b> — older TLE epochs carry more positional uncertainty.</li>
+        </ul>
+
+        <h2>05 · Kessler Index</h2>
+        <p>A single 0–100 dial summarizing catalog-wide risk: 70% from the average of the five highest-risk events
+           in the window, 30% from how many risky conjunctions are piling up relative to catalog size.</p>
+
+        <h2>Limitations</h2>
+        <p>This is a triage and demonstration tool, not a certified conjunction-assessment system. It does not model
+           covariance/uncertainty ellipsoids, maneuver plans, or atmospheric drag beyond what SGP4 itself accounts
+           for. For operational decisions, refer to official sources such as the U.S. Space Force's CARA program.</p>
+      </div>
+    </section>
+
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
