@@ -1,254 +1,128 @@
 [
   {
     "name": "ISS (ZARYA)",
-    "norad_id": 25544,
     "line1": "1 25544U 98067A   26243.14365400  .00005331  00000+0  10505-3 0  9995",
     "line2": "2 25544  51.6314 289.0986 0005054  92.1995 267.9572 15.48946173583375",
-    "apogee_km": 423.243,
-    "perigee_km": 416.372,
-    "inclination_deg": 51.6314,
-    "bstar_drag": 0.00010505,
-    "object_type": "PAYLOAD",
-    "group": "stations"
+    "catalog_number": 25544
   },
   {
     "name": "POISK",
-    "norad_id": 36086,
     "line1": "1 36086U 09060A   26243.14365400  .00005331  00000+0  10505-3 0  9993",
     "line2": "2 36086  51.6314 289.0986 0005054  92.1995 267.9572 15.48946173584065",
-    "apogee_km": 423.243,
-    "perigee_km": 416.372,
-    "inclination_deg": 51.6314,
-    "bstar_drag": 0.00010505,
-    "object_type": "PAYLOAD",
-    "group": "stations"
+    "catalog_number": 36086
   },
   {
     "name": "CSS (TIANHE)",
-    "norad_id": 48274,
     "line1": "1 48274U 21035A   26243.17734209  .00017323  00000+0  21631-3 0  9997",
     "line2": "2 48274  41.4679 226.7722 0001955 253.7351 106.3272 15.59451710304873",
-    "apogee_km": 390.566,
-    "perigee_km": 387.92,
-    "inclination_deg": 41.4679,
-    "bstar_drag": 0.00021631,
-    "object_type": "PAYLOAD",
-    "group": "stations"
+    "catalog_number": 48274
   },
   {
     "name": "ISS (NAUKA)",
-    "norad_id": 49044,
     "line1": "1 49044U 21066A   26243.14365400  .00005331  00000+0  10505-3 0  9991",
     "line2": "2 49044  51.6314 289.0986 0005054  92.1995 267.9572 15.48946173584108",
-    "apogee_km": 423.243,
-    "perigee_km": 416.372,
-    "inclination_deg": 51.6314,
-    "bstar_drag": 0.00010505,
-    "object_type": "PAYLOAD",
-    "group": "stations"
+    "catalog_number": 49044
   },
   {
     "name": "FREGAT DEB",
-    "norad_id": 49271,
     "line1": "1 49271U 11037PF  26242.99753495  .00016434  00000+0  24249-1 0  9991",
     "line2": "2 49271  51.6396 136.6946 0931828  87.9539 282.7606 12.43954157234351",
-    "apogee_km": 2223.05,
-    "perigee_km": 756.721,
-    "inclination_deg": 51.6396,
-    "bstar_drag": 0.024249000000000003,
-    "object_type": "DEBRIS",
-    "group": "stations"
+    "catalog_number": 49271
   },
   {
     "name": "CSS (WENTIAN)",
-    "norad_id": 53239,
     "line1": "1 53239U 22085A   26242.40883657  .00019520  00000+0  24340-3 0  9998",
     "line2": "2 53239  41.4676 231.4402 0001912 255.2624 104.8002 15.59424488288235",
-    "apogee_km": 390.616,
-    "perigee_km": 388.028,
-    "inclination_deg": 41.4676,
-    "bstar_drag": 0.0002434,
-    "object_type": "PAYLOAD",
-    "group": "stations"
+    "catalog_number": 53239
   },
   {
     "name": "CSS (MENGTIAN)",
-    "norad_id": 54216,
     "line1": "1 54216U 22143A   26243.17734209  .00017323  00000+0  21631-3 0  9991",
     "line2": "2 54216  41.4679 226.7722 0001955 253.7351 106.3272 15.59451710305439",
-    "apogee_km": 390.566,
-    "perigee_km": 387.92,
-    "inclination_deg": 41.4679,
-    "bstar_drag": 0.00021631,
-    "object_type": "PAYLOAD",
-    "group": "stations"
+    "catalog_number": 54216
   },
   {
     "name": "HRC MONOBLOCK CAMERA",
-    "norad_id": 66052,
     "line1": "1 66052U 98067XR  26243.00118866  .00174327  00000+0  58790-3 0  9991",
     "line2": "2 66052  51.6156 251.1414 0006243  50.0107 310.1445 15.88954799 49838",
-    "apogee_km": 309.385,
-    "perigee_km": 301.04,
-    "inclination_deg": 51.6156,
-    "bstar_drag": 0.0005879,
-    "object_type": "PAYLOAD",
-    "group": "stations"
+    "catalog_number": 66052
   },
   {
     "name": "SZ-21 MODULE",
-    "norad_id": 66515,
     "line1": "1 66515U 25246C   26243.00154130  .00059621  00000+0  26315-3 0  9995",
     "line2": "2 66515  41.4707 199.0385 0010288 203.4830 156.5548 15.83482137 45579",
-    "apogee_km": 327.494,
-    "perigee_km": 313.71,
-    "inclination_deg": 41.4707,
-    "bstar_drag": 0.00026315,
-    "object_type": "PAYLOAD",
-    "group": "stations"
+    "catalog_number": 66515
   },
   {
     "name": "DUPLEX",
-    "norad_id": 66906,
     "line1": "1 66906U 98067XS  26242.36509894  .00052293  00000+0  46029-3 0  9991",
     "line2": "2 66906  51.6240 273.3489 0004259  72.5706 287.5756 15.68218263 42277",
-    "apogee_km": 366.87,
-    "perigee_km": 361.127,
-    "inclination_deg": 51.624,
-    "bstar_drag": 0.00046028999999999997,
-    "object_type": "PAYLOAD",
-    "group": "stations"
+    "catalog_number": 66906
   },
   {
     "name": "KNACKSAT-2",
-    "norad_id": 67683,
     "line1": "1 67683U 98067XZ  26242.81841668  .00056715  00000+0  52121-3 0  9995",
     "line2": "2 67683  51.6247 277.1536 0007555 101.1662 259.0184 15.67099007 31958",
-    "apogee_km": 372.305,
-    "perigee_km": 362.113,
-    "inclination_deg": 51.6247,
-    "bstar_drag": 0.0005212099999999999,
-    "object_type": "PAYLOAD",
-    "group": "stations"
+    "catalog_number": 67683
   },
   {
     "name": "GXIBA-1",
-    "norad_id": 67685,
     "line1": "1 67685U 98067YB  26242.32642172  .00086588  00000+0  69125-3 0  9995",
     "line2": "2 67685  51.6229 277.5907 0008270  94.2887 265.9056 15.70348441 31904",
-    "apogee_km": 363.471,
-    "perigee_km": 352.33,
-    "inclination_deg": 51.6229,
-    "bstar_drag": 0.00069125,
-    "object_type": "PAYLOAD",
-    "group": "stations"
+    "catalog_number": 67685
   },
   {
     "name": "UITMSAT-2",
-    "norad_id": 67686,
     "line1": "1 67686U 98067YC  26242.46573575  .00153565  00000+0  83612-3 0  9998",
     "line2": "2 67686  51.6226 272.4805 0008411  58.1219 302.0600 15.78919152 31985",
-    "apogee_km": 339.147,
-    "perigee_km": 327.857,
-    "inclination_deg": 51.6226,
-    "bstar_drag": 0.00083612,
-    "object_type": "PAYLOAD",
-    "group": "stations"
+    "catalog_number": 67686
   },
   {
     "name": "LEOPARD",
-    "norad_id": 67687,
     "line1": "1 67687U 98067YD  26242.82260432  .00091745  00000+0  72669-3 0  9995",
     "line2": "2 67687  51.6250 275.6895 0008063  65.5812 294.6026 15.70515269 31892",
-    "apogee_km": 362.854,
-    "perigee_km": 351.992,
-    "inclination_deg": 51.625,
-    "bstar_drag": 0.00072669,
-    "object_type": "PAYLOAD",
-    "group": "stations"
+    "catalog_number": 67687
   },
   {
     "name": "HMU-SAT2",
-    "norad_id": 67688,
     "line1": "1 67688U 98067YE  26242.39040140  .00119679  00000+0  79641-3 0  9994",
     "line2": "2 67688  51.6236 275.0203 0007757  61.7085 298.4696 15.74503429 31864",
-    "apogee_km": 351.261,
-    "perigee_km": 340.829,
-    "inclination_deg": 51.6236,
-    "bstar_drag": 0.00079641,
-    "object_type": "PAYLOAD",
-    "group": "stations"
+    "catalog_number": 67688
   },
   {
     "name": "CREW DRAGON 12",
-    "norad_id": 67796,
     "line1": "1 67796U 26031A   26243.14365400  .00005331  00000+0  10505-3 0  9992",
     "line2": "2 67796  51.6314 289.0986 0005054  92.1995 267.9572 15.48946173584146",
-    "apogee_km": 423.243,
-    "perigee_km": 416.372,
-    "inclination_deg": 51.6314,
-    "bstar_drag": 0.00010505,
-    "object_type": "PAYLOAD",
-    "group": "stations"
+    "catalog_number": 67796
   },
   {
     "name": "PROGRESS-MS 33",
-    "norad_id": 68319,
     "line1": "1 68319U 26058A   26243.14365400  .00005331  00000+0  10505-3 0  9993",
     "line2": "2 68319  51.6314 289.0986 0005054  92.1995 267.9572 15.48946173584227",
-    "apogee_km": 423.243,
-    "perigee_km": 416.372,
-    "inclination_deg": 51.6314,
-    "bstar_drag": 0.00010505,
-    "object_type": "PAYLOAD",
-    "group": "stations"
+    "catalog_number": 68319
   },
   {
     "name": "CYGNUS NG-24",
-    "norad_id": 68689,
     "line1": "1 68689U 26079A   26242.62751382  .00005530  00000+0  10868-3 0  9999",
     "line2": "2 68689  51.6315 291.6521 0005038  90.5345 269.6220 15.48940460584182",
-    "apogee_km": 423.249,
-    "perigee_km": 416.4,
-    "inclination_deg": 51.6315,
-    "bstar_drag": 0.00010868,
-    "object_type": "PAYLOAD",
-    "group": "stations"
+    "catalog_number": 68689
   },
   {
     "name": "PROGRESS-MS 34",
-    "norad_id": 68837,
     "line1": "1 68837U 26093A   26242.62751382  .00005530  00000+0  10868-3 0  9990",
     "line2": "2 68837  51.6315 291.6521 0005038  90.5345 269.6220 15.48940460584222",
-    "apogee_km": 423.249,
-    "perigee_km": 416.4,
-    "inclination_deg": 51.6315,
-    "bstar_drag": 0.00010868,
-    "object_type": "PAYLOAD",
-    "group": "stations"
+    "catalog_number": 68837
   },
   {
     "name": "TIANZHOU-10",
-    "norad_id": 69049,
     "line1": "1 69049U 26102A   26242.40883657  .00019520  00000+0  24340-3 0  9998",
     "line2": "2 69049  41.4676 231.4402 0001912 255.2624 104.8002 15.59424488305220",
-    "apogee_km": 390.616,
-    "perigee_km": 388.028,
-    "inclination_deg": 41.4676,
-    "bstar_drag": 0.0002434,
-    "object_type": "PAYLOAD",
-    "group": "stations"
+    "catalog_number": 69049
   },
   {
     "name": "SHENZHOU-23 (SZ-23)",
-    "norad_id": 69180,
     "line1": "1 69180U 26113A   26242.40883657  .00019520  00000+0  24340-3 0  9996",
     "line2": "2 69180  41.4676 231.4402 0001912 255.2624 104.8002 15.59424488305079",
-    "apogee_km": 390.616,
-    "perigee_km": 388.028,
-    "inclination_deg": 41.4676,
-    "bstar_drag": 0.0002434,
-    "object_type": "PAYLOAD",
-    "group": "stations"
+    "catalog_number": 69180
   }
 ]
