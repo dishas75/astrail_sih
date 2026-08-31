@@ -176,6 +176,8 @@ def fetch_group(group: str, force_refresh: bool = False) -> Tuple[Optional[List[
                 pass
 
     headers = {
+        "User-Agent": "ASTRAIL-Engine/1.0 (+https://celestrak.org)",
+        "Accept": "text/plain",
         "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36",
         "Accept": "text/plain,text/html,*/*",
     }
@@ -186,6 +188,7 @@ def fetch_group(group: str, force_refresh: bool = False) -> Tuple[Optional[List[
         if group == "last-30-days":
             params = {"SPECIAL": "last-30-days", "FORMAT": "tle"}
 
+        resp = requests.get(CELESTRAK_BASE, params=params, headers=headers, timeout=10)
         resp = requests.get(CELESTRAK_BASE, params=params, headers=headers, timeout=5)
         resp.raise_for_status()
         objects = _parse_tle_text(resp.text, group=group)
