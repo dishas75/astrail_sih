@@ -233,14 +233,14 @@ function renderOrbits(tracks, highlightNorads) {
     const isHighlighted = highlightNorads.has(track.norad_id);
     const pts = track.points.map((p) => new THREE.Vector3(p[0], p[2], p[1]));
     const geo = new THREE.BufferGeometry().setFromPoints(pts);
-    const color = isHighlighted ? 0xff5d72 : 0x2d5f8a;
-    const mat = new THREE.LineBasicMaterial({ color, transparent: true, opacity: isHighlighted ? 0.9 : 0.35 });
+    const color = isHighlighted ? 0xff5d72 : 0x4be3a6;
+    const mat = new THREE.LineBasicMaterial({ color, transparent: true, opacity: isHighlighted ? 0.9 : 0.4 });
     orbitGroup.add(new THREE.Line(geo, mat));
 
     // Marker sits at the object's *current* position (first sampled point,
     // t=now); the line shows where it's headed over the look-ahead window.
     const current = pts[0];
-    const markerColor = isHighlighted ? 0xff5d72 : 0x5fd8ff;
+    const markerColor = isHighlighted ? 0xff5d72 : 0x4be3a6;
     const markerGeo = new THREE.SphereGeometry(isHighlighted ? 140 : 90, 10, 10);
     const markerMat = new THREE.MeshBasicMaterial({ color: markerColor });
     const marker = new THREE.Mesh(markerGeo, markerMat);
@@ -477,9 +477,12 @@ function currentParams() {
 }
 
 /* ================= source status (sidebar) ================= */
+let backendHasConnected = false;
+
 function setSourceChip(source) {
   const chip = document.getElementById("sideDot").parentElement;
   const label = document.getElementById("sideSourceLabel");
+  const sub = document.getElementById("sideSourceSub");
   chip.className = "side-status";
   const map = {
     live: ["source-live", "LIVE · CELESTRAK"],
@@ -490,6 +493,26 @@ function setSourceChip(source) {
   const [cls, text] = map[source] || ["", "UNKNOWN"];
   if (cls) chip.classList.add(cls);
   label.textContent = text;
+  if (sub) sub.style.display = "none";
+}
+
+// First-ever backend response of the session gets a brief "SYSTEM ONLINE"
+// flash before settling into the normal source chip (LIVE / DEMO / CACHED),
+// so a judge watching the wake-up from Render's free tier sees a clear
+// "it's alive" moment rather than jumping straight to a source label.
+function markBackendOnline(source) {
+  if (backendHasConnected) {
+    setSourceChip(source);
+    return;
+  }
+  backendHasConnected = true;
+  const chip = document.getElementById("sideDot").parentElement;
+  const label = document.getElementById("sideSourceLabel");
+  const sub = document.getElementById("sideSourceSub");
+  chip.className = "side-status source-online";
+  label.textContent = "SYSTEM ONLINE";
+  if (sub) sub.style.display = "none";
+  setTimeout(() => setSourceChip(source), 1100);
 }
 
 /* ================= OVERVIEW page rendering ================= */
@@ -791,7 +814,7 @@ function renderInsight(kessler) {
   el.innerHTML = `Across <b>${state.events.length}</b> detected conjunction${state.events.length > 1 ? "s" : ""},
     risk is currently driven more by <b>${driver}</b> than the other factor
     (avg proximity score ${avgProx.toFixed(1)} vs. avg velocity score ${avgVel.toFixed(1)}).
-    The Kessler Index sits at <b>${kessler.index.toFixed(1)}</b> (${kessler.label.toLowerCase()}),
+    The ASTRAIL Risk Index sits at <b>${kessler.index.toFixed(1)}</b> (${kessler.label.toLowerCase()}),
     with the soonest closest approach between <b>${soonest.object_a.name}</b> and
     <b>${soonest.object_b.name}</b> in about <b>${soonest.hours_to_tca.toFixed(1)}h</b>.`
     .replace(/\s+/g, " ");
@@ -814,7 +837,7 @@ async function runScan() {
     const orbitsRes = await fetch(API.orbits(groups, demo, Math.min(hours, 6)));
     const orbitsData = await orbitsRes.json();
     lastTracks = orbitsData.tracks;
-    setSourceChip(orbitsData.source);
+    markBackendOnline(orbitsData.source);
     log(`Ingested ${orbitsData.tracks.length} tracked objects (${orbitsData.source}).`);
     document.getElementById("objectCountVal").textContent = orbitsData.tracks.length;
     state.objectCount = orbitsData.tracks.length;
@@ -822,13 +845,19 @@ async function runScan() {
     renderOrbits(lastTracks, new Set());
   } catch (err) {
     log(`Orbit ingestion failed: ${err}`, "err");
+    if (!backendHasConnected) {
+      const label = document.getElementById("sideSourceLabel");
+      const sub = document.getElementById("sideSourceSub");
+      label.textContent = "STILL WAKING UP…";
+      if (sub) sub.style.display = "block";
+    }
   }
 
   try {
     const res = await fetch(API.conjunctions(groups, demo, hours, threshold));
     const data = await res.json();
     state.events = data.events;
-    setSourceChip(data.source);
+    markBackendOnline(data.source);
 
     log(`Conjunction scan complete: ${data.events.length} events within ${threshold}km.`,
         data.events.length ? "warn" : "");
@@ -859,6 +888,24 @@ async function runScan() {
     log(`Conjunction scan failed: ${err}`, "err");
   }
 }
+
+/* ================= quick demo CTA ================= */
+document.getElementById("quickDemoBtn").addEventListener("click", () => {
+  document.getElementById("demoToggle").checked = true;
+  hoursSlider.value = 48;
+  document.getElementById("hoursVal").textContent = "48h";
+  threshSlider.value = 25;
+  document.getElementById("threshVal").textContent = "25 km";
+  // Demo Mode restricts itself to the offline synthetic catalog regardless
+  // of which object sets are selected, but pick sensible ones anyway so the
+  // Object Sets panel makes sense if a judge glances at it afterward.
+  Array.from(document.getElementById("groupSelect").options).forEach((o) => {
+    o.selected = ["stations", "cosmos-1408-debris", "iridium-33-debris", "cosmos-2251-debris"].includes(o.value);
+  });
+  goToPage("live");
+  log("Quick Demo: synthetic catalog · 48h window · 25km threshold.");
+  runScan();
+});
 
 /* ================= boot ================= */
 window.addEventListener("load", () => {
