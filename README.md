@@ -110,49 +110,18 @@ it deploys anywhere that runs Python:
 
 ---
 
-## API Reference (OAS 3.1)
+## API reference
 
-Visit `/docs` in your browser for the interactive Swagger UI.
+| Endpoint | Purpose |
+|---|---|
+| `GET /api/status` | Health check |
+| `GET /api/groups` | Available CelesTrak object-set groups |
+| `GET /api/catalog?groups=...&demo=bool` | Current tracked objects + live position |
+| `GET /api/orbits?groups=...&demo=bool&hours=&step_s=` | Sampled orbit paths for the 3D/2D viewers |
+| `GET /api/conjunctions?groups=...&demo=bool&hours=&threshold_km=` | Scored conjunction events + Kessler Index |
+| `GET /api/export/alerts.csv?...` | Downloadable conjunction report |
 
-### System & Health
-| Method | Endpoint | Description |
-|---|---|---|
-| `GET` | `/api/health` | Report API health, risk model status, and live catalog size |
-| `GET` | `/api/catalog/status` | Detailed metadata about the currently cached TLE partitions |
-| `GET` | `/` | Serves dashboard frontend or API status |
-
-### Catalog Management
-| Method | Endpoint | Description |
-|---|---|---|
-| `POST` | `/api/catalog/refresh?group=...` | Fetch latest TLE catalog for a CelesTrak group partition |
-| `POST` | `/api/catalog/refresh-multi?groups=...` | Fetch and merge TLEs from multiple groups with deduplication |
-| `GET` | `/api/catalog?limit=&group=` | Return satellite records with apogee, perigee, inclination, drag |
-| `GET` | `/tle/bulk?group=active` | Bulk TLE records (`name`, `line1`, `line2`, `catalog_number`) cached 2h for client SGP4 |
-
-### Ground-Tracks & Orbit Propagation
-| Method | Endpoint | Description |
-|---|---|---|
-| `GET` | `/api/orbit-tracks?hours=3.0&step_minutes=2.0&limit=100` | Propagated ground-track series (`lat`, `lon`, `alt_km`, `t`) |
-| `GET` | `/api/satellites/{norad_id}/track` | Ground-track for a single satellite by NORAD ID |
-| `GET` | `/api/orbits` | Legacy 3D TEME coordinate track array for visualizer |
-
-### Conjunction Assessment & Risk
-| Method | Endpoint | Description |
-|---|---|---|
-| `GET` | `/api/conjunctions/scan?max_candidates=50&miss_distance_cutoff_km=25.0&hours=12.0` | Ultra-fast parallel conjunction scan with altitude-shell prefiltering |
-| `GET` | `/api/conjunctions?limit=100&group=` | Return stored conjunction alerts (or evaluate active window) |
-| `GET` | `/api/export/alerts.csv` | Downloadable CSV conjunction report |
-
-### Satellite Logging & Bookmarks
-| Method | Endpoint | Description |
-|---|---|---|
-| `GET` | `/api/logs/recently-viewed` | Return the last 10 recently viewed satellites |
-| `POST` | `/api/logs/recently-viewed` | Record a satellite view event |
-| `DELETE` | `/api/logs/recently-viewed` | Clear all entries from the recently viewed log |
-| `GET` | `/api/logs/saved-satellites` | Return all saved/bookmarked satellites with notes and tags |
-| `POST` | `/api/logs/saved-satellites` | Save or update a satellite in the track log |
-| `DELETE` | `/api/logs/saved-satellites/{norad_id}` | Remove a satellite from the saved log |
-| `GET` | `/api/logs/download/{log_type}?format=json\|log` | Download log file in JSON or formatted text |
+All parameters are optional; sane defaults are baked in.
 
 ---
 

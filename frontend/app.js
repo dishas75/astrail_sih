@@ -2,24 +2,13 @@
    ASTRAIL — frontend application logic
    ============================================================ */
 
-const API_BASE = (window.location.protocol === "file:" || (window.location.port !== "8000" && (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1")))
-  ? "http://localhost:8000"
-  : "";
-
 const API = {
-  health: () => `${API_BASE}/api/health`,
-  catalogStatus: () => `${API_BASE}/api/catalog/status`,
-  catalog: (groups, demo) => `${API_BASE}/api/catalog`,
-  orbits: (groups, demo, hours) => `${API_BASE}/api/orbits?groups=${groups}&demo=${demo}&hours=${hours}`,
-  orbitTracks: (hours, limit) => `${API_BASE}/api/orbit-tracks?hours=${hours}&limit=${limit}`,
+  catalog: (groups, demo) => `/api/catalog?groups=${groups}&demo=${demo}`,
+  orbits: (groups, demo, hours) => `/api/orbits?groups=${groups}&demo=${demo}&hours=${hours}`,
   conjunctions: (groups, demo, hours, threshold) =>
-    `${API_BASE}/api/conjunctions?groups=${groups}&demo=${demo}&hours=${hours}&threshold_km=${threshold}`,
-  conjunctionsScan: (candidates, threshold, hours) =>
-    `${API_BASE}/api/conjunctions/scan?max_candidates=${candidates}&miss_distance_cutoff_km=${threshold}&hours=${hours}`,
+    `/api/conjunctions?groups=${groups}&demo=${demo}&hours=${hours}&threshold_km=${threshold}`,
   exportCsv: (groups, demo, hours, threshold) =>
-    `${API_BASE}/api/export/alerts.csv?groups=${groups}&demo=${demo}&hours=${hours}&threshold_km=${threshold}`,
-  recordView: () => `${API_BASE}/api/logs/recently-viewed`,
-  savedSatellites: () => `${API_BASE}/api/logs/saved-satellites`,
+    `/api/export/alerts.csv?groups=${groups}&demo=${demo}&hours=${hours}&threshold_km=${threshold}`,
 };
 
 const EARTH_RADIUS_KM = 6371;
@@ -286,7 +275,7 @@ function renderOrbits(tracks, highlightNorads) {
 function drawRadar() {
   const canvas = document.getElementById("viewerRadar");
   const container = document.getElementById("viewer3d").parentElement;
-  canvas.width = canvas.clientWidth || (container && container.clientWidth) || 800;
+  canvas.width = canvas.clientWidth || container.clientWidth;
   canvas.height = 420;
   const ctx = canvas.getContext("2d");
   ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -428,18 +417,6 @@ function selectEvent(e) {
     <div class="inspector-row"><span>Confidence Penalty</span><span>${e.confidence_penalty}</span></div>
   `;
   refreshOrbitHighlight(new Set([e.object_a.norad_id, e.object_b.norad_id]));
-
-  // Record viewed satellite
-  fetch(API.recordView(), {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      norad_id: e.object_a.norad_id,
-      name: e.object_a.name,
-      altitude_km: 0,
-      risk_level: e.risk_level,
-    }),
-  }).catch(() => {});
 }
 
 function showObjectInspector(markerInfo) {
@@ -457,18 +434,6 @@ function showObjectInspector(markerInfo) {
     <div class="inspector-row"><span>Conjunction Status</span><span style="color:var(--text-faint)">No alert in current window</span></div>
   `;
   refreshOrbitHighlight(new Set([markerInfo.norad_id]));
-
-  // Record viewed satellite
-  fetch(API.recordView(), {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      norad_id: markerInfo.norad_id,
-      name: markerInfo.name,
-      altitude_km: markerInfo.altitude_km || 0,
-      risk_level: "NORMAL",
-    }),
-  }).catch(() => {});
 }
 
 let lastTracks = [];
@@ -870,64 +835,57 @@ async function runScan() {
 
   try {
     const orbitsRes = await fetch(API.orbits(groups, demo, Math.min(hours, 6)));
-    if (!orbitsRes.ok) throw new Error(`HTTP ${orbitsRes.status}: ${orbitsRes.statusText}`);
     const orbitsData = await orbitsRes.json();
-    lastTracks = orbitsData.tracks || [];
-    markBackendOnline(orbitsData.source || "live");
-    log(`Ingested ${lastTracks.length} tracked objects (${orbitsData.source || "live"}).`);
-    document.getElementById("objectCountVal").textContent = lastTracks.length;
-    state.objectCount = lastTracks.length;
-    state.lastCatalog = lastTracks.map((t) => ({ name: t.name, norad_id: t.norad_id, object_type: t.object_type }));
+    lastTracks = orbitsData.tracks;
+    markBackendOnline(orbitsData.source);
+    log(`Ingested ${orbitsData.tracks.length} tracked objects (${orbitsData.source}).`);
+    document.getElementById("objectCountVal").textContent = orbitsData.tracks.length;
+    state.objectCount = orbitsData.tracks.length;
+    state.lastCatalog = orbitsData.tracks.map((t) => ({ name: t.name, norad_id: t.norad_id }));
     renderOrbits(lastTracks, new Set());
   } catch (err) {
-    log(`Orbit ingestion: ${err.message || err}`, "err");
+    log(`Orbit ingestion failed: ${err}`, "err");
     if (!backendHasConnected) {
       const label = document.getElementById("sideSourceLabel");
       const sub = document.getElementById("sideSourceSub");
-      label.textContent = "CONNECTING…";
+      label.textContent = "STILL WAKING UP…";
       if (sub) sub.style.display = "block";
     }
   }
 
   try {
     const res = await fetch(API.conjunctions(groups, demo, hours, threshold));
-    if (!res.ok) throw new Error(`HTTP ${res.status}: ${res.statusText}`);
     const data = await res.json();
-    const events = data.events || (Array.isArray(data) ? data : []);
-    state.events = events;
-    markBackendOnline(data.source || "live");
+    state.events = data.events;
+    markBackendOnline(data.source);
 
-    log(`Conjunction scan complete: ${events.length} events within ${threshold}km.`,
-        events.length ? "warn" : "");
-    const critical = events.filter((e) => e.risk_level === "CRITICAL");
+    log(`Conjunction scan complete: ${data.events.length} events within ${threshold}km.`,
+        data.events.length ? "warn" : "");
+    const critical = data.events.filter((e) => e.risk_level === "CRITICAL");
     if (critical.length) log(`⚠ ${critical.length} CRITICAL conjunction(s) detected.`, "err");
 
-    if (data.kessler_index) {
-      updateGauge(data.kessler_index);
-      state.kesslerHistory.push({ t: new Date(), index: data.kessler_index.index });
-      if (state.kesslerHistory.length > 30) state.kesslerHistory.shift();
-      renderInsight(data.kessler_index);
-    }
-    renderAlerts(events);
-    renderTimeline(events, hours);
+    updateGauge(data.kessler_index);
+    renderAlerts(data.events);
+    renderTimeline(data.events, hours);
     drawRadar();
-    updateOverview(data.kessler_index || { index: 0, label: "NOMINAL", critical_count: 0, high_count: 0 },
-                   events, state.objectCount, data.source || "live");
+    updateOverview(data.kessler_index, data.events, state.objectCount, data.source);
+
+    state.kesslerHistory.push({ t: new Date(), index: data.kessler_index.index });
+    if (state.kesslerHistory.length > 30) state.kesslerHistory.shift();
+    renderInsight(data.kessler_index);
 
     if (document.getElementById("page-analytics").classList.contains("active")) drawAllCharts();
 
-    if (events.length) {
+    if (data.events.length) {
       const highlightSet = new Set();
-      events.slice(0, 8).forEach((e) => {
-        const idA = e.sat1_id || (e.object_a && e.object_a.norad_id);
-        const idB = e.sat2_id || (e.object_b && e.object_b.norad_id);
-        if (idA) highlightSet.add(idA);
-        if (idB) highlightSet.add(idB);
+      data.events.slice(0, 8).forEach((e) => {
+        highlightSet.add(e.object_a.norad_id);
+        highlightSet.add(e.object_b.norad_id);
       });
       renderOrbits(lastTracks, highlightSet);
     }
   } catch (err) {
-    log(`Conjunction scan: ${err.message || err}`, "err");
+    log(`Conjunction scan failed: ${err}`, "err");
   }
 }
 
@@ -950,21 +908,9 @@ document.getElementById("quickDemoBtn").addEventListener("click", () => {
 });
 
 /* ================= boot ================= */
-async function checkEngineHealth() {
-  try {
-    const res = await fetch(API.health());
-    if (res.ok) {
-      const data = await res.json();
-      markBackendOnline("live");
-      log(`Space Debris Engine online · ${data.catalog_size} satellites registered.`);
-    }
-  } catch (_) {}
-}
-
 window.addEventListener("load", () => {
   init3D();
   log("ASTRAIL online. Awaiting mission parameters.");
-  checkEngineHealth();
   runScan();
 });
 
