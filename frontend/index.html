@@ -47,9 +47,8 @@
     <div class="side-footer">
       <div class="side-status">
         <span class="dot" id="sideDot"></span>
-        <span id="sideSourceLabel">INITIALIZING ORBITAL DATA…</span>
+        <span id="sideSourceLabel">CONNECTING…</span>
       </div>
-      <div class="side-status-sub" id="sideSourceSub">Free server may require up to 60s on first launch.</div>
       <div class="side-clock"><span id="utcClock">--:--:--</span> UTC</div>
     </div>
   </nav>
@@ -60,12 +59,12 @@
     <header class="statusbar">
       <div class="statusbar-title" id="pageTitle">Overview</div>
       <div class="statusbar-right">
-        <div class="mini-stat"><span id="objectCountVal">—</span><label>objects</label></div>
-        <div class="mini-stat"><span id="alertCountVal">—</span><label>alerts</label></div>
+        <div class="mini-stat"><span id="objectCountVal">0</span><label>objects</label></div>
+        <div class="mini-stat"><span id="alertCountVal">0</span><label>alerts</label></div>
         <div class="mini-kessler" id="miniKessler">
           <span class="mini-kessler-dot"></span>
-          <span id="miniKesslerVal">—</span>
-          <label>risk idx</label>
+          <span id="miniKesslerVal">0.0</span>
+          <label>kessler</label>
         </div>
       </div>
     </header>
@@ -79,13 +78,9 @@
           <p>ASTRAIL pulls public TLE data, propagates every tracked object with SGP4, and flags conjunctions
              before they happen with a single number that tells you how bad the neighborhood looks right now.</p>
           <div class="hero-actions">
-            <button class="btn-primary" id="quickDemoBtn">▸ RUN QUICK DEMO</button>
-            <button class="btn-ghost" data-goto="live">Open Live Tracking</button>
+            <button class="btn-primary" data-goto="live">▸ Open Live Tracking</button>
             <button class="btn-ghost" data-goto="methodology">How it works</button>
           </div>
-          <p class="hero-hint">Quick Demo loads the offline synthetic catalog, a 48h window, and a sensible
-             alert threshold, then runs a scan for you. Fine-tune everything under Advanced Scan Parameters
-             in Live Tracking.</p>
         </div>
         <div class="hero-visual">
           <svg viewBox="0 0 260 260" class="pulse-svg">
@@ -115,7 +110,7 @@
           <span class="kpi-sub" id="kpiAlertsSub">within threshold</span>
         </div>
         <div class="kpi-card">
-          <label>ASTRAIL Risk Index</label>
+          <label>Kessler Index</label>
           <span class="kpi-value" id="kpiKessler">—</span>
           <span class="kpi-sub" id="kpiKesslerLabel">nominal</span>
         </div>
@@ -146,7 +141,7 @@
 
         <aside class="panel panel-left">
           <div class="card">
-            <h2>Advanced Scan Parameters</h2>
+            <h2>Mission Parameters</h2>
             <label class="field">
               <span>Object Sets</span>
               <select id="groupSelect" multiple size="4">
@@ -186,17 +181,16 @@
               <svg viewBox="0 0 200 120" id="kesslerSvg">
                 <path d="M10,110 A90,90 0 0,1 190,110" class="gauge-track"/>
                 <path d="M10,110 A90,90 0 0,1 190,110" class="gauge-fill" id="gaugeFill"/>
-                <text x="100" y="90" class="gauge-value" id="kesslerValue">—</text>
-                <text x="100" y="108" class="gauge-label" id="kesslerLabel">AWAITING SCAN</text>
+                <text x="100" y="90" class="gauge-value" id="kesslerValue">0.0</text>
+                <text x="100" y="108" class="gauge-label" id="kesslerLabel">NOMINAL</text>
               </svg>
             </div>
             <div class="kessler-meta">
-              <h2>ASTRAIL Kessler Risk Index</h2>
-              <p class="kessler-subtitle">Experimental catalog-wide risk indicator · 0–100</p>
+              <h2>Kessler Index</h2>
               <p>Catalog-wide collision risk, aggregated across all detected conjunctions in the current window.</p>
               <div class="kessler-counts">
-                <span class="pill critical" id="criticalCount">— CRITICAL</span>
-                <span class="pill high" id="highCount">— HIGH</span>
+                <span class="pill critical" id="criticalCount">0 CRITICAL</span>
+                <span class="pill high" id="highCount">0 HIGH</span>
               </div>
             </div>
           </div>
@@ -247,9 +241,9 @@
           <canvas id="compChart" class="chart-canvas" height="220"></canvas>
         </div>
         <div class="card">
-          <h2>ASTRAIL Risk Index — Session History</h2>
+          <h2>Kessler Index — Session History</h2>
           <canvas id="trendChart" class="chart-canvas" height="220"></canvas>
-          <p class="chart-note">Tracks the ASTRAIL Risk Index across scans run during this session. Run a new scan to add a point.</p>
+          <p class="chart-note">Tracks the Kessler Index across scans run during this session. Run a new scan to add a point.</p>
         </div>
         <div class="card wide">
           <h2>Top Objects by Conjunction Involvement</h2>
@@ -293,12 +287,9 @@
           <li><b>Data confidence (10%)</b> — older TLE epochs carry more positional uncertainty.</li>
         </ul>
 
-        <h2>05 · ASTRAIL Risk Index</h2>
-        <p>A single 0–100 dial summarizing catalog-wide risk. This is an ASTRAIL-designed aggregate indicator,
-           not an established or peer-reviewed standard — it is inspired by the cascading-collision risk
-           associated with the Kessler effect, but the formula is our own: 70% from the average of the five
-           highest-risk events in the window, 30% from how many risky conjunctions are piling up relative to
-           catalog size.</p>
+        <h2>05 · Kessler Index</h2>
+        <p>A single 0–100 dial summarizing catalog-wide risk: 70% from the average of the five highest-risk events
+           in the window, 30% from how many risky conjunctions are piling up relative to catalog size.</p>
 
         <h2>Limitations</h2>
         <p>This is a triage and demonstration tool, not a certified conjunction-assessment system. It does not model

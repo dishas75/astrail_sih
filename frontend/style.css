@@ -131,8 +131,6 @@ a:hover{text-decoration:underline;}
 .side-status.source-live .dot{background:var(--nominal);color:var(--nominal);}
 .side-status.source-demo .dot{background:var(--amber);color:var(--amber);}
 .side-status.source-cache .dot{background:var(--accent);color:var(--accent);}
-.side-status.source-online .dot{background:var(--nominal);color:var(--nominal);}
-.side-status-sub{font-size:9.5px;line-height:1.4;color:var(--text-faint);letter-spacing:0.2px;margin-top:-4px;}
 .side-clock{font-family:var(--font-mono);font-size:11px;color:var(--accent);letter-spacing:0.5px;opacity:.9;}
 
 /* ---------------- main area ---------------- */
@@ -199,8 +197,7 @@ a:hover{text-decoration:underline;}
 .hero-copy h1{font-family:var(--font-display);font-weight:600;font-size:31px;line-height:1.32;
   margin:0 0 18px;color:var(--text);letter-spacing:0.1px;}
 .hero-copy p{font-size:15px;line-height:1.75;color:var(--text-dim);max-width:520px;margin:0 0 26px;}
-.hero-actions{display:flex;gap:12px;flex-wrap:wrap;}
-.hero-hint{font-size:12px;line-height:1.6;color:var(--text-faint);max-width:520px;margin:14px 0 0;}
+.hero-actions{display:flex;gap:12px;}
 
 .btn-primary,.btn-ghost{
   padding:12px 22px;border-radius:10px;font-family:var(--font-body);font-weight:600;
@@ -307,8 +304,6 @@ input[type=checkbox]{accent-color:var(--amber);width:16px;height:16px;}
 .gauge-value{font-family:var(--font-display);font-size:27px;fill:var(--text);text-anchor:middle;font-weight:600;}
 .gauge-label{font-family:var(--font-mono);font-size:10px;fill:var(--text-faint);text-anchor:middle;letter-spacing:1.8px;}
 .kessler-meta p{font-size:12px;color:var(--text-dim);margin:0 0 10px;line-height:1.6;}
-.kessler-subtitle{font-family:var(--font-mono);font-size:10px !important;letter-spacing:0.6px;
-  color:var(--text-faint) !important;text-transform:uppercase;margin:-4px 0 10px !important;}
 .kessler-counts{display:flex;gap:8px;}
 .pill{font-size:10px;letter-spacing:0.6px;padding:4px 10px;border-radius:20px;font-family:var(--font-mono);
   backdrop-filter:blur(6px);}
